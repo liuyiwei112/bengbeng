@@ -1,0 +1,32 @@
+server:
+  port: 8090
+  context-path: /beng
+  tomcat:
+    max-threads: 1000
+    max-connections: 1000
+    accept-count: 200
+
+spring:
+
+  profiles:
+    active: dev
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+      ACCEPT_EMPTY_STRING_AS_NULL_OBJECT: true
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+  devtools:
+    restart:
+      enabled: true
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/mapper/*.xml

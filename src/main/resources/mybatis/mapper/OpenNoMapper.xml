@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="cn.liuyw.bengbeng.mapper.OpenNoMapper">
+
+    <sql id="base">
+        a.id,a.issue,a.open_time openTime,a.guess_type guessType,
+        a.open_no openNo,a.open_no_label openNoLabel,a.return_rate returnRate,a.all_return_rate allReturnRate
+    </sql>
+
+
+    <select id="getOpenNoByType" resultType="cn.liuyw.bengbeng.bean.OpenNo">
+        select <include refid="base"></include>,b.base_pl baseRate,b.base_insert baseInsert
+        from guess_open_no a
+        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
+        where a.guess_type = #{guessType}
+        order by issue desc
+        limit #{page},#{pageSize}
+    </select>
+
+    <select id="getOpenNoCount" resultType="java.lang.Integer">
+        select count(1)
+        from guess_open_no a
+        where a.guess_type = #{guessType}
+    </select>
+
+    <insert id="addOpenNo" parameterType="cn.liuyw.bengbeng.bean.OpenNo">
+        insert into guess_open_no(issue,guess_type,open_time,open_no,open_no_label,return_rate,all_return_rate,create_date)
+        values(#{issue},#{guessType},#{openTime},#{openNo},#{openNoLabel},#{returnRate},#{allReturnRate},now())
+    </insert>
+
+    <select id="onceQueryOpenNo" resultType="cn.liuyw.bengbeng.bean.OpenNo">
+        select <include refid="base"></include>
+        from guess_open_no a
+        where a.guess_type = #{guessType} and a.issue = #{issue}
+    </select>
+
+    <select id="queryLuckSum" resultType="java.lang.Integer">
+        select sum(t.getmoney - t.cost) from (
+        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
+            b.base_insert*#{beishu}*a.return_rate as getmoney ,1000*#{beishu} as cost
+        from guess_open_no a
+        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
+        where a.guess_type = 'luck' order by issue+0 desc
+        ) t
+    </select>
+
+    <select id="queryHappySum" resultType="java.lang.Integer">
+        select sum(t.getmoney - t.cost) from (
+        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
+            b.base_insert*#{beishu}*a.return_rate as getmoney ,216*#{beishu} as cost
+        from guess_open_no a
+        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
+        where a.guess_type = 'happy' order by issue+0 desc
+        ) t
+    </select>
+
+    <select id="queryPk5Sum" resultType="java.lang.Integer">
+        select sum(t.getmoney - t.cost) from (
+        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
+            b.base_insert*#{beishu}*a.return_rate as getmoney ,100*#{beishu} as cost
+        from guess_open_no a
+        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
+        where a.guess_type = 'pk5' order by issue+0 desc
+        ) t
+    </select>
+
+    <select id="getOpenNoWithoutPl" resultType="cn.liuyw.bengbeng.bean.OpenNo">
+        select <include refid="base"></include>
+        from guess_open_no a
+        where a.return_rate is null or a.return_rate = 0 order by a.open_time desc
+    </select>
+
+    <update id="updatePl" parameterType="cn.liuyw.bengbeng.bean.OpenNo">
+        update guess_open_no a set
+        a.return_rate = #{returnRate},
+        a.all_return_rate = #{allReturnRate}
+        where a.id = #{id}
+    </update>
+
+    <update id="updateOpenTime" parameterType="cn.liuyw.bengbeng.bean.OpenNo">
+        update guess_open_no a set
+        a.open_time = #{openTime}
+        where a.id = #{id}
+    </update>
+
+
+</mapper>
