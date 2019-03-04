@@ -249,6 +249,14 @@ public class StringUtil {
         return -1;
     }
 
+    public static Double[] replaceStrArrToDoubleArr(String[] strArr){
+        Double[] dblArr = new Double[strArr.length];
+        for(int i=0;i<strArr.length;i++){
+            dblArr[i] = Double.parseDouble(strArr[i]);
+        }
+        return dblArr;
+    }
+
     public static void main(String[] args) {
     }
 

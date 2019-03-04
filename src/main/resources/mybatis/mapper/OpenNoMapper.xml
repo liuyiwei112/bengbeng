@@ -15,6 +15,9 @@
         from guess_open_no a
         left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
         where a.guess_type = #{guessType}
+        <if test="openTime!=null and openTime != ''">
+            and substr(a.open_time,1,10) = #{openTime}
+        </if>
         order by issue desc
         limit #{page},#{pageSize}
     </select>

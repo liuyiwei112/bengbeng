@@ -319,6 +319,105 @@ public class HttpUtil {
         }
     }
 
+    public static String[] getLuckPhp() throws Exception{
+        doLogin();
+        long startDate = System.currentTimeMillis();
+        String url = "http://www.bengbeng.com/luck.php";
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpget = new HttpGet(url);
+        httpget.setHeader("cookie", cookieStr);
+        httpget.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpget.setHeader("Proxy-Connection", "keep-alive");
+        httpget.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+        HttpResponse res = httpClient.execute(httpget);
+        HttpEntity entity = res.getEntity();
+        if (entity != null) {
+            String tempbf;
+            StringBuffer stringBuffer = new StringBuffer();
+            InputStream instream = entity.getContent();
+            BufferedReader br = new BufferedReader(new InputStreamReader(instream, "GB2312"));
+            while ((tempbf = br.readLine()) != null) {
+                stringBuffer.append(tempbf);
+            }
+            String preHtml = stringBuffer.toString();
+            long endDate = System.currentTimeMillis();
+
+            System.out.println(">>>>>获取开奖时间和期数耗时:"+(endDate-startDate));
+            Integer leftTime = Integer.parseInt(preHtml.substring(preHtml.indexOf("var cDate =")+13,preHtml.indexOf(";function ShowSecond()")-1));
+            String nowIssue = preHtml.substring(preHtml.indexOf("var luckNO =")+14,preHtml.indexOf(";if (readCookie('cSoundLuck') ")-1);
+            return new String[]{(leftTime)+"",nowIssue};
+        }
+        return null;
+
+    }
+
+    public static String[] getHappyPhp() throws Exception{
+        doLogin();
+        long startDate = System.currentTimeMillis();
+        String url = "http://www.bengbeng.com/happy.php";
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpget = new HttpGet(url);
+        httpget.setHeader("cookie", cookieStr);
+        httpget.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpget.setHeader("Proxy-Connection", "keep-alive");
+        httpget.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+        HttpResponse res = httpClient.execute(httpget);
+        HttpEntity entity = res.getEntity();
+        if (entity != null) {
+            String tempbf;
+            StringBuffer stringBuffer = new StringBuffer();
+            InputStream instream = entity.getContent();
+            BufferedReader br = new BufferedReader(new InputStreamReader(instream, "GB2312"));
+            while ((tempbf = br.readLine()) != null) {
+                stringBuffer.append(tempbf);
+            }
+            String preHtml = stringBuffer.toString();
+            long endDate = System.currentTimeMillis();
+
+            System.out.println(">>>>>获取开奖时间和期数耗时:"+(endDate-startDate));
+            Integer leftTime = Integer.parseInt(preHtml.substring(preHtml.indexOf("var cDate =")+13,preHtml.indexOf(";function ShowSecond()")-1));
+            String nowIssue = preHtml.substring(preHtml.indexOf("var happyNO =")+15,preHtml.indexOf(";if(readCookie('cSoundHappy')")-1);
+            return new String[]{(leftTime)+"",nowIssue};
+        }
+        return null;
+
+    }
+
+    public static String[] getPk5Php() throws Exception{
+        doLogin();
+        long startDate = System.currentTimeMillis();
+        String url = "http://www.bengbeng.com/pk5.php";
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpget = new HttpGet(url);
+        httpget.setHeader("cookie", cookieStr);
+        httpget.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpget.setHeader("Proxy-Connection", "keep-alive");
+        httpget.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+        HttpResponse res = httpClient.execute(httpget);
+        HttpEntity entity = res.getEntity();
+        Map resultMap = new HashMap();
+        if (entity != null) {
+            String tempbf;
+            StringBuffer stringBuffer = new StringBuffer();
+            InputStream instream = entity.getContent();
+            BufferedReader br = new BufferedReader(new InputStreamReader(instream, "GB2312"));
+            while ((tempbf = br.readLine()) != null) {
+                stringBuffer.append(tempbf);
+            }
+            String preHtml = stringBuffer.toString();
+            long endDate = System.currentTimeMillis();
+
+            System.out.println(">>>>>获取开奖时间和期数耗时:"+(endDate-startDate));
+//            System.out.println(preHtml);
+            Integer leftTime = Integer.parseInt(preHtml.substring(preHtml.indexOf("var cDate =")+13,preHtml.indexOf(";function ShowSecond()")-1));
+            String nowIssue = preHtml.substring(preHtml.indexOf("第<font>")+7,preHtml.indexOf("</font>期"));
+            System.out.println("leftTime="+leftTime+"$$$nowIssue="+nowIssue);
+            return new String[]{(leftTime)+"",nowIssue};
+        }
+        return null;
+
+    }
+
     public static String[] getSgsPhp() throws Exception{
         doLogin();
         long startDate = System.currentTimeMillis();
@@ -346,25 +445,58 @@ public class HttpUtil {
             System.out.println(">>>>>获取开奖时间和期数耗时:"+(endDate-startDate));
             Integer leftTime = Integer.parseInt(preHtml.substring(preHtml.indexOf("var cDate =")+13,preHtml.indexOf(";function ShowSecond()")-1));
             String nowIssue = preHtml.substring(preHtml.indexOf("第<span>")+7,preHtml.indexOf("</span>回合"));
-            return new String[]{(leftTime+Math.round((endDate-startDate)/1000))+"",nowIssue};
+            return new String[]{(leftTime)+"",nowIssue};
         }
         return null;
 
     }
 
-    public static String[] getHappyPhp() throws Exception{
+    public static void touzhuLuck(String issue,Integer beishu) throws Exception{
         doLogin();
+        String url = "http://www.bengbeng.com/luckInsert.php?luckNO="+issue+"&act=invest";
         long startDate = System.currentTimeMillis();
-        String url = "http://www.bengbeng.com/happy.php";
+        Map plMap = refreshPL("luck", issue, "3");
+        String rateStr = plMap.get("allReturnRate").toString();
+        System.out.println(">>>>>投注前返奖率为:["+rateStr+"]>>>>>>>>>>>>");
+        Double[] ratesDbl = StringUtil.replaceStrArrToDoubleArr(rateStr.split(","));
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add(new BasicNameValuePair("hearchen","0c0a73eb37a3175c89d65fc78a7a94ee"));
+        nvps.add(new BasicNameValuePair("hearyessss","hearyessss"));
+        nvps.add(new BasicNameValuePair("payType","1"));
+        nvps.add(new BasicNameValuePair("herets","7"));
+        nvps.add(new BasicNameValuePair("select2","1"));
+        nvps.add(new BasicNameValuePair("kkl","2"));
+        Integer[] touzhu = new Integer[28];
+        while(OpenNoUtils.calLuckLeftNoCost(ratesDbl)>550){
+            OpenNoUtils.replaceLuckMinRate(ratesDbl);
+        }
+        for(int j=0;j<ratesDbl.length;j++){
+            if(ratesDbl[j]<10000){
+                nvps.add(new BasicNameValuePair("tbChk["+(j)+"]", "on"));
+                nvps.add(new BasicNameValuePair("tbNum["+(j)+"]", (OpenNoConstant.luckFillNum[j]*beishu)+""));
+                touzhu[j] = OpenNoConstant.luckFillNum[j]*beishu;
+            }else{
+                nvps.add(new BasicNameValuePair("tbChk["+(j)+"]", ""));
+                nvps.add(new BasicNameValuePair("tbNum["+(j)+"]", "0"));
+                touzhu[j] = 0;
+            }
+        }
+        long endDate = System.currentTimeMillis();
+        System.out.println(">>>>>Luck刷新赔率耗时:"+(endDate-startDate));
+        System.out.println(">>>>>Luck投注方案为:"+JSONArray.toJSONString(touzhu)+">>>>>>>>>>>>");
+
         HttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpget = new HttpGet(url);
-        httpget.setHeader("cookie", cookieStr);
-        httpget.setHeader("X-Requested-With", "XMLHttpRequest");
-        httpget.setHeader("Proxy-Connection", "keep-alive");
-        httpget.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
-        HttpResponse res = httpClient.execute(httpget);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("cookie", cookieStr);
+        httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpPost.setHeader("Proxy-Connection", "keep-alive");
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+
+        HttpResponse res = httpClient.execute(httpPost);
         HttpEntity entity = res.getEntity();
-        Map resultMap = new HashMap();
+
         if (entity != null) {
             String tempbf;
             StringBuffer stringBuffer = new StringBuffer();
@@ -374,45 +506,55 @@ public class HttpUtil {
                 stringBuffer.append(tempbf);
             }
             String preHtml = stringBuffer.toString();
-            long endDate = System.currentTimeMillis();
-
-            System.out.println(">>>>>获取开奖时间和期数耗时:"+(endDate-startDate));
-            Integer leftTime = Integer.parseInt(preHtml.substring(preHtml.indexOf("var cDate =")+13,preHtml.indexOf(";function ShowSecond()")-1));
-            String nowIssue = preHtml.substring(preHtml.indexOf("var happyNO =")+15,preHtml.indexOf(";if(readCookie('cSoundHappy')")-1);
-            return new String[]{(leftTime+Math.round((endDate-startDate)/1000))+"",nowIssue};
+//            System.out.println(preHtml);
+            if(preHtml.indexOf("history.back")>-1){
+                System.out.println(preHtml.substring(preHtml.indexOf("alert")+7,preHtml.indexOf(";history.back")-2));
+            }else{
+                System.out.println(preHtml.substring(preHtml.indexOf("alert")+7,preHtml.indexOf(";location.href")-2));
+            }
         }
-        return null;
 
     }
 
-    public static void touzhuSgs(String issue) throws Exception{
-        String url = "http://www.bengbeng.com/sgsInsert.php?no="+issue;
+    public static void touzhuHappy(String issue,Integer beishu) throws Exception{
         doLogin();
+        String url = "http://www.bengbeng.com/happyInsert.php?happyNO="+issue;
         long startDate = System.currentTimeMillis();
-        Map plMap = refreshPL("sgs", issue, "3");
+        Map plMap = refreshPL("happy", issue, "3");
         String rateStr = plMap.get("allReturnRate").toString();
         System.out.println(">>>>>投注前返奖率为:["+rateStr+"]>>>>>>>>>>>>");
-        String[] rates = rateStr.split(",");
+        Double[] ratesDbl = StringUtil.replaceStrArrToDoubleArr(rateStr.split(","));
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         nvps.add(new BasicNameValuePair("hearchen","0c0a73eb37a3175c89d65fc78a7a94ee"));
         nvps.add(new BasicNameValuePair("payType","1"));
+        nvps.add(new BasicNameValuePair("hearnew","old"));
+        nvps.add(new BasicNameValuePair("hearyes","bbb"));
         nvps.add(new BasicNameValuePair("herets","12"));
-        nvps.add(new BasicNameValuePair("kkl","3"));
-        Integer[] touzhu = new Integer[10];
-        for(int i=0;i<rates.length;i++){
-            String rate = rates[i];
-            Double rateDb = Double.parseDouble(rate);
-            if(rateDb>=9.95){
-                nvps.add(new BasicNameValuePair("tbNum[]", "250"));
-                touzhu[i] = 50*5;
+        nvps.add(new BasicNameValuePair("select2","1"));
+        nvps.add(new BasicNameValuePair("kkl","4"));
+        Integer[] touzhu = new Integer[16];
+//        Integer calNum = 2;
+//        while(calNum>0){
+//            OpenNoUtils.replaceHappyMinRate(ratesDbl);
+//            calNum--;
+//        }
+        while(OpenNoUtils.calHappyLeftNoCost(ratesDbl)>120){
+            OpenNoUtils.replaceHappyMinRate(ratesDbl);
+        }
+        for(int j=0;j<ratesDbl.length;j++){
+            if(ratesDbl[j]<1000){
+                nvps.add(new BasicNameValuePair("tbChk["+(j+3)+"]", "on"));
+                nvps.add(new BasicNameValuePair("tbNum["+(j+3)+"]", (OpenNoConstant.happyFillNum[j]*beishu)+""));
+                touzhu[j] = OpenNoConstant.happyFillNum[j]*beishu;
             }else{
-                nvps.add(new BasicNameValuePair("tbNum[]", "1"));
-                touzhu[i] = 1;
+                nvps.add(new BasicNameValuePair("tbChk["+(j+3)+"]", "on"));
+                nvps.add(new BasicNameValuePair("tbNum["+(j+3)+"]", "1"));
+                touzhu[j] = 1;
             }
         }
         long endDate = System.currentTimeMillis();
-        System.out.println(">>>>>刷新赔率耗时:"+(endDate-startDate));
-        System.out.println(">>>>>投注方案为:["+JSONArray.toJSONString(touzhu)+"]>>>>>>>>>>>>");
+        System.out.println(">>>>>Happy刷新赔率耗时:"+(endDate-startDate));
+        System.out.println(">>>>>Happy投注方案为:"+JSONArray.toJSONString(touzhu)+">>>>>>>>>>>>");
 
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
@@ -446,39 +588,99 @@ public class HttpUtil {
     }
 
 
-    public static void touzhuHappy(String issue) throws Exception{
-        String url = "http://www.bengbeng.com/happyInsert.php?happyNO="+issue;
+    public static void touzhuPk5(String issue,Integer beishu) throws Exception{
+        String url = "http://www.bengbeng.com/pk5Insert.php?no="+issue;
         doLogin();
         long startDate = System.currentTimeMillis();
-        Map plMap = refreshPL("happy", issue, "3");
+        Map plMap = refreshPL("pk5", issue, "3");
         String rateStr = plMap.get("allReturnRate").toString();
         System.out.println(">>>>>投注前返奖率为:["+rateStr+"]>>>>>>>>>>>>");
-        String[] rates = rateStr.split(",");
+        Double[] ratesDbl = StringUtil.replaceStrArrToDoubleArr(rateStr.split(","));
+
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         nvps.add(new BasicNameValuePair("hearchen","0c0a73eb37a3175c89d65fc78a7a94ee"));
         nvps.add(new BasicNameValuePair("payType","1"));
-        nvps.add(new BasicNameValuePair("hearnew","old"));
-        nvps.add(new BasicNameValuePair("hearyes","bbb"));
-        nvps.add(new BasicNameValuePair("herets","12"));
-        nvps.add(new BasicNameValuePair("select2","1"));
-        nvps.add(new BasicNameValuePair("kkl","4"));
-        Integer[] touzhu = new Integer[16];
-        for(int i=0;i<rates.length;i++){
-            String rate = rates[i];
-            Double rateDb = Double.parseDouble(rate);
-            if(rateDb*1.01>OpenNoConstant.happyReturnRate[i]){
-                nvps.add(new BasicNameValuePair("tbChk["+(i+3)+"]", "on"));
-                nvps.add(new BasicNameValuePair("tbNum["+(i+3)+"]", OpenNoConstant.happyFillNum[i].toString()));
-                touzhu[i] = OpenNoConstant.happyFillNum[i];
+        nvps.add(new BasicNameValuePair("herets","13"));
+        nvps.add(new BasicNameValuePair("kkl","2"));
+        Integer[] touzhu = new Integer[5];
+        OpenNoUtils.replacePk5MinRate(ratesDbl);
+        for(int j=0;j<ratesDbl.length;j++){
+            nvps.add(new BasicNameValuePair("tbChk["+(j)+"]", "on"));
+            if(ratesDbl[j]<1000){
+                nvps.add(new BasicNameValuePair("tbNum["+(j)+"]", (OpenNoConstant.pk5FillNum[j]*beishu)+""));
+                touzhu[j] = OpenNoConstant.pk5FillNum[j]*beishu;
             }else{
-                nvps.add(new BasicNameValuePair("tbChk["+(i+3)+"]", ""));
-                nvps.add(new BasicNameValuePair("tbNum["+(i+3)+"]", "0"));
-                touzhu[i] = 0;
+                nvps.add(new BasicNameValuePair("tbNum["+(j)+"]", "1"));
+                touzhu[j] = 1;
             }
         }
         long endDate = System.currentTimeMillis();
         System.out.println(">>>>>刷新赔率耗时:"+(endDate-startDate));
-        System.out.println(">>>>>投注方案为:["+JSONArray.toJSONString(touzhu)+"]>>>>>>>>>>>>");
+        System.out.println(">>>>>投注方案为:"+JSONArray.toJSONString(touzhu)+">>>>>>>>>>>>");
+
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setHeader("cookie", cookieStr);
+        httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+        httpPost.setHeader("Proxy-Connection", "keep-alive");
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+
+        HttpResponse res = httpClient.execute(httpPost);
+        HttpEntity entity = res.getEntity();
+
+        if (entity != null) {
+            String tempbf;
+            StringBuffer stringBuffer = new StringBuffer();
+            InputStream instream = entity.getContent();
+            BufferedReader br = new BufferedReader(new InputStreamReader(instream, "GB2312"));
+            while ((tempbf = br.readLine()) != null) {
+                stringBuffer.append(tempbf);
+            }
+            String preHtml = stringBuffer.toString();
+//            System.out.println(preHtml);
+            if(preHtml.indexOf("history.back")>-1){
+                System.out.println(preHtml.substring(preHtml.indexOf("alert")+7,preHtml.indexOf(";history.back")-2));
+            }else{
+                System.out.println(preHtml.substring(preHtml.indexOf("alert")+7,preHtml.indexOf(";location.href")-2));
+            }
+        }
+
+    }
+
+    public static void touzhuSgs(String issue,Integer beishu) throws Exception{
+        String url = "http://www.bengbeng.com/sgsInsert.php?no="+issue;
+        doLogin();
+        long startDate = System.currentTimeMillis();
+        Map plMap = refreshPL("sgs", issue, "3");
+        String rateStr = plMap.get("allReturnRate").toString();
+        System.out.println(">>>>>投注前返奖率为:["+rateStr+"]>>>>>>>>>>>>");
+        Double[] rateDbl = StringUtil.replaceStrArrToDoubleArr(rateStr.split(","));
+        int calNum = 6;
+        while (calNum > 0) {
+            OpenNoUtils.replaceSgsMinRate(rateDbl);
+            calNum--;
+        }
+
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add(new BasicNameValuePair("hearchen","0c0a73eb37a3175c89d65fc78a7a94ee"));
+        nvps.add(new BasicNameValuePair("payType","1"));
+        nvps.add(new BasicNameValuePair("herets","12"));
+        nvps.add(new BasicNameValuePair("kkl","3"));
+        Integer[] touzhu = new Integer[10];
+        for(int i=0;i<rateDbl.length;i++){
+            if(rateDbl[i]<100){
+                nvps.add(new BasicNameValuePair("tbNum[]", 10*beishu+""));
+                touzhu[i] = 10*beishu;
+            }else{
+                nvps.add(new BasicNameValuePair("tbNum[]", "1"));
+                touzhu[i] = 1;
+            }
+        }
+        long endDate = System.currentTimeMillis();
+        System.out.println(">>>>>Sgs刷新赔率耗时:"+(endDate-startDate)+">>>>>>>>>>>>>");
+        System.out.println(">>>>>投注方案为:"+JSONArray.toJSONString(touzhu)+">>>>>>>>>>>>");
 
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
@@ -514,26 +716,17 @@ public class HttpUtil {
 
     public static void main(String[] args) {
         try {
-//            HttpUtil.getSgs();
-//            List<OpenNo> list = HttpUtil.getPK();
-//            System.out.println(list.size());
-//            int i=0;
-//            for (OpenNo openNo:list) {
-//                System.out.println("序号:"+(i++)+"------" + openNo.getIssue()+"------"+openNo.getOpenTime()+"------"+openNo.getOpenNo()+"-------"+openNo.getReturnRate());
-//            }
-            String[] now = getSgsPhp();
-            touzhuSgs("582980");
-//            int second = Integer.parseInt(now[0]);
-//            while(second>=0){
-//                System.out.println(">>>"+now[1]+"期开心16剩余时间:"+second);
-//                if(second==2){
-//                    touzhu(now[1]);
-//                }
-//                second--;
-//                Thread.sleep(1000);
-//            }
-//            System.out.println(decodeUnicode("\\u767b\\u5f55\\u6210\\u529f"));
-//            System.out.println(refreshPL("sgs", "582043", "3"));
+//            touzhuLuck("708071",1);
+            String[] now = getLuckPhp();
+            int second = Integer.parseInt(now[0])-1;
+            while(second>=0){
+                System.out.println(">>>"+now[1]+"期Luck剩余时间:"+second);
+                if(second==6){
+                    touzhuLuck(now[1],1);
+                }
+                second--;
+                Thread.sleep(1000);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

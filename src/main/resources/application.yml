@@ -1,5 +1,4 @@
 server:
-  port: 8090
   context-path: /beng
   tomcat:
     max-threads: 1000
@@ -9,7 +8,7 @@ server:
 spring:
 
   profiles:
-    active: dev
+    active: web
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false

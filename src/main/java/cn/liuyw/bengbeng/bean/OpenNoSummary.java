@@ -7,7 +7,10 @@ public class OpenNoSummary {
 
     private String openDay;
     private Integer totalNum;
-    private String percents;
+    private float summaryValue;
+    private String guessType;
+    private Integer summaryType;
+    private Integer summaryCount;
 
     public String getOpenDay() {
         return openDay;
@@ -25,11 +28,35 @@ public class OpenNoSummary {
         this.totalNum = totalNum;
     }
 
-    public String getPercents() {
-        return percents;
+    public Integer getSummaryType() {
+        return summaryType;
     }
 
-    public void setPercents(String percents) {
-        this.percents = percents;
+    public void setSummaryType(Integer summaryType) {
+        this.summaryType = summaryType;
+    }
+
+    public String getGuessType() {
+        return guessType;
+    }
+
+    public void setGuessType(String guessType) {
+        this.guessType = guessType;
+    }
+
+    public Integer getSummaryCount() {
+        return summaryCount;
+    }
+
+    public void setSummaryCount(Integer summaryCount) {
+        this.summaryCount = summaryCount;
+    }
+
+    public float getSummaryValue() {
+        return summaryValue;
+    }
+
+    public void setSummaryValue(float summaryValue) {
+        this.summaryValue = summaryValue;
     }
 }

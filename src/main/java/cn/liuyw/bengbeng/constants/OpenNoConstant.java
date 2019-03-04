@@ -18,6 +18,13 @@ public class OpenNoConstant {
     public static Double[] happyReturnRate = new Double[]{216.0,72.0,36.0,21.6,14.4,10.29,8.64,8.0,8.0,8.64,10.29,14.4,21.6,36.0,72.0,216.0};
     public static Integer[] happyFillNum = new Integer[]{1,3,6,10,15,21,25,27,27,25,21,15,10,6,3,1};
 
+    public static Double[] pk5ReturnRate = new Double[]{100.0,3.7037,16.6666,2.7777,3.3333};
+    public static Integer[] pk5FillNum = new Integer[]{1,27,6,36,30};
+
+    public static Double[] luckReturnRate = new Double[]{1000.0,333.33,166.67,100.0,66.66,47.61,35.71,27.77,22.22,18.18,15.87,14.49,13.69,13.33,
+            13.33,13.69,14.49,15.87,18.18,22.22,27.77,35.71,47.61,66.66,100.0,166.67,333.33,1000.0};
+    public static Integer[] luckFillNum = new Integer[]{1,3,6,10,15,21,28,36,45,55,63,69,73,75,75,73,69,63,55,45,36,28,21,15,10,6,3,1};
+
 
 
 }

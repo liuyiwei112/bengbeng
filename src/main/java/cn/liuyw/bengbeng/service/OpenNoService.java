@@ -25,8 +25,8 @@ public class OpenNoService {
     @Autowired
     OpenNoMapper openNoMapper;
 
-    public Pager<OpenNo> getOpenNoByType(String guessType, Integer page, Integer pageSize) {
-        List<OpenNo> openNoList = openNoMapper.getOpenNoByType(guessType, (page - 1) * pageSize, pageSize);
+    public Pager<OpenNo> getOpenNoByType(String guessType,String openTime, Integer page, Integer pageSize) {
+        List<OpenNo> openNoList = openNoMapper.getOpenNoByType(guessType,openTime, (page - 1) * pageSize, pageSize);
         for (OpenNo openNo : openNoList) {
             if (guessType.equals("luck")) {
                 openNo.setAllNo(OpenNoConstant.luckAllNo);
@@ -106,7 +106,7 @@ public class OpenNoService {
 
     public void updateOpenTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-        List<OpenNo> openNoList = openNoMapper.getOpenNoByType("sgs", 0, 1000);
+        List<OpenNo> openNoList = openNoMapper.getOpenNoByType("sgs","", 0, 1000);
         for (OpenNo openNo : openNoList) {
             openNo.setOpenTime(sdf.format(new Date()) + '-' + HttpUtil.calSgsOpenTime(Integer.parseInt(openNo.getIssue())));
             openNoMapper.updateOpenTime(openNo);

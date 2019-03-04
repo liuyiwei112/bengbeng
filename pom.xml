@@ -6,7 +6,7 @@
 
     <groupId>cn.liuyw.bengbeng</groupId>
     <artifactId>bengbeng</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.4</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -116,20 +116,29 @@
             <properties>
                 <profiles_active>dev</profiles_active>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
-            <id>test</id>
+            <id>happy</id>
             <properties>
-                <profiles_active>test</profiles_active>
+                <profiles_active>happy</profiles_active>
             </properties>
         </profile>
         <profile>
-            <id>prod</id>
+            <id>luck</id>
             <properties>
-                <profiles_active>prod</profiles_active>
+                <profiles_active>luck</profiles_active>
+            </properties>
+        </profile>
+        <profile>
+            <id>pk5</id>
+            <properties>
+                <profiles_active>pk5</profiles_active>
+            </properties>
+        </profile>
+        <profile>
+            <id>sgs</id>
+            <properties>
+                <profiles_active>sgs</profiles_active>
             </properties>
         </profile>
     </profiles>

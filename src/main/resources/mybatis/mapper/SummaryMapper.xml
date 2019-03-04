@@ -4,86 +4,43 @@
         
 <mapper namespace="cn.liuyw.bengbeng.mapper.SummaryMapper">
 
+    <select id="querySummaryAll" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
+        select sum(a.summary_count) as summaryCount,round(sum(a.summary_value)*100,2) as summaryValue from guess_summary a
+        where a.guess_type = #{guessType} and a.summary_type = #{summaryType}
+    </select>
 
-    <select id="queryLuckSum" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select count(1) as totalNum, concat(round(sum(t.getmoney - t.cost)/(10*#{beishu}),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-            b.base_insert*#{beishu}*a.return_rate as getmoney ,1000*#{beishu} as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'luck' order by issue+0 desc
+    <select id="queryAllInSum" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
+        select count(1) as summaryCount,substr(t.open_time,1,10) as openDay,round(sum(t.getmoney - t.cost)/t.cost,4) as summaryValue from (
+                select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
+                b.base_insert*10000*a.return_rate as getmoney ,c.cost*10000 as cost
+                from guess_open_no a
+                left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
+            left join (
+                select guess_type,sum(base_insert) as cost from guess_base_pl
+                group by guess_type
+            ) c on a.guess_type = c.guess_type
+                where a.guess_type = #{guessType} and a.open_time like concat(#{openTime},'%')
         ) t
     </select>
 
-    <select id="queryLuckSumByDay" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select SUBSTR(t.open_time,1,10) as openDay, concat(round(sum(t.getmoney - t.cost)/(10*10),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-        b.base_insert*10*a.return_rate as getmoney ,1000*10 as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'luck' order by issue+0 desc
-        ) t group by substr(t.open_time,1,10) order by substr(t.open_time,1,10) desc limit 14
+    <select id="querySummaryList" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
+        select guess_type as guessType,summary_day as openDay,summary_type as summaryType,summary_value as summaryValue,summary_count as summaryCount
+        from guess_summary
+        where guess_type = #{guessType} and summary_type = #{summaryType}
+        <if test="openTime!=null and openTime!=''">
+            and summary_day = #{openTime}
+        </if>
+        order by summary_day desc limit 0,30
     </select>
 
-    <select id="queryHappySum" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select count(1) as totalNum, concat(round(sum(t.getmoney - t.cost)/(10*#{beishu}),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-            b.base_insert*#{beishu}*a.return_rate as getmoney ,216*#{beishu} as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'happy' order by issue+0 desc
-        ) t
-    </select>
+    <insert id="insertSummary" parameterType="cn.liuyw.bengbeng.bean.OpenNoSummary">
+        insert into guess_summary(guess_type,summary_day,summary_type,summary_value,summary_count)
+        values(#{guessType},#{openDay},#{summaryType},#{summaryValue},#{summaryCount})
+    </insert>
 
-    <select id="queryHappySumByDay" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select SUBSTR(t.open_time,1,10) as openDay, concat(round(sum(t.getmoney - t.cost)/(2.16*10),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-        b.base_insert*10*a.return_rate as getmoney ,216*10 as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'happy' order by issue+0 desc
-        ) t group by substr(t.open_time,1,10) order by substr(t.open_time,1,10) desc limit 14
-    </select>
-
-    <select id="queryPk5Sum" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select count(1) as totalNum, concat(round(sum(t.getmoney - t.cost)/(10*#{beishu}),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-            b.base_insert*#{beishu}*a.return_rate as getmoney ,100*#{beishu} as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'pk5' order by issue+0 desc
-        ) t
-    </select>
-
-    <select id="queryPk5SumByDay" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select SUBSTR(t.open_time,1,10) as openDay, concat(round(sum(t.getmoney - t.cost)/(1*10),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-        b.base_insert*10*a.return_rate as getmoney ,100*10 as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'pk5' order by issue+0 desc
-        ) t group by substr(t.open_time,1,10) order by substr(t.open_time,1,10) desc limit 14
-    </select>
-
-
-    <select id="querySgsSum" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select count(1) as totalNum, concat(round(sum(t.getmoney - t.cost)/(100*#{beishu}),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-        b.base_insert*#{beishu}*a.return_rate as getmoney ,10000*#{beishu} as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'sgs' order by issue+0 desc
-        ) t
-    </select>
-
-    <select id="querySgsSumByDay" resultType="cn.liuyw.bengbeng.bean.OpenNoSummary">
-        select SUBSTR(t.open_time,1,10) as openDay, concat(round(sum(t.getmoney - t.cost)/(100),2),'%') as percents from (
-        select a.issue,a.open_time,a.open_no_label,a.return_rate,b.base_pl,
-        b.base_insert*a.return_rate as getmoney ,10000 as cost
-        from guess_open_no a
-        left join guess_base_pl b on a.open_no = b.open_no and a.guess_type = b.guess_type
-        where a.guess_type = 'sgs' order by issue+0 desc
-        ) t group by substr(t.open_time,1,10) order by substr(t.open_time,1,10) desc limit 14
-    </select>
+    <update id="updateSummary" parameterType="cn.liuyw.bengbeng.bean.OpenNoSummary">
+        update guess_summary SET summary_value = #{summaryValue},summary_count = #{summaryCount}
+        where guess_type = #{guessType} and summary_type = #{summaryType} and summary_day = #{openDay}
+    </update>
 
 </mapper>

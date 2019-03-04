@@ -27,14 +27,12 @@ public class OpenNoController {
     @Autowired
     private OpenNoService openNoService;
 
-    @Autowired
-    private SummaryService summaryService;
-
     @GetMapping("/list/{guessType}")
     public Result getOpenNoByType(@PathVariable("guessType") String guessType,
+                                  @RequestParam String openTime,
                                   @RequestParam("page") Integer page,
                                   @RequestParam("pageSize") Integer pageSize) throws BusinessException{
-        Pager<OpenNo> pager = openNoService.getOpenNoByType(guessType,page,pageSize);
+        Pager<OpenNo> pager = openNoService.getOpenNoByType(guessType,openTime,page,pageSize);
         return Result.ok(pager);
     }
 
@@ -43,37 +41,6 @@ public class OpenNoController {
         openNoService.addOpenNo(openNoList);
         return Result.ok();
     }
-
-    @PostMapping("/test")
-    public Result addOpenNo(@RequestBody String content) throws BusinessException{
-        System.out.println(content);
-        return Result.ok();
-    }
-
-    @GetMapping("/test")
-    public Result addOpenNo123(@RequestParam String content) throws BusinessException{
-        System.out.println(content);
-        return Result.ok();
-    }
-
-    @GetMapping("/sumall")
-    public Result getAllSumDefault(Integer beishu){
-        if(beishu==null){
-            beishu = 10;
-        }
-        Map map = new HashMap();
-        map.put("luckSum",summaryService.queryLuckSum(beishu));
-        map.put("happySum",summaryService.queryHappySum(beishu));
-        map.put("pk5Sum",summaryService.queryPk5Sum(beishu));
-        map.put("sgsSum",summaryService.querySgsSum(beishu));
-        return Result.ok(map);
-    }
-
-    @GetMapping("/sumday/{guessType}")
-    public Result getSumByDay(@PathVariable String guessType){
-        return Result.ok(summaryService.queryLuckSumByDay(guessType));
-    }
-
 
     @GetMapping("/synOpenData/{guessType}")
     public Result synOpenData(@PathVariable String guessType) throws BusinessException{

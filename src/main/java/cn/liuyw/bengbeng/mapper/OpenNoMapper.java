@@ -21,7 +21,7 @@ public interface OpenNoMapper {
      * @param pageSize
      * @return
      */
-    List<OpenNo> getOpenNoByType(@Param("guessType") String guessType,@Param("page") Integer page,@Param("pageSize") Integer pageSize);
+    List<OpenNo> getOpenNoByType(@Param("guessType") String guessType,@Param("openTime") String openTime,@Param("page") Integer page,@Param("pageSize") Integer pageSize);
 
     Integer getOpenNoCount(@Param("guessType") String guessType);
 
